@@ -1,0 +1,28 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+# Print the IP address
+_IP=$(hostname -I) || true
+if [ "$_IP" ]; then
+  printf "My IP address is %s\n" "$_IP"
+fi
+echo 0 > /run/ping.fail
+rm -f /home/pi/switch.json
+touch /home/pi/switch.json
+chmod 644 /home/pi/switch.json
+chown pi:pi /home/pi/switch.json
+sudo -H -u pi bash -c "cd /home/pi; nohup ./server.py >/dev/null 2>&1 &"
+cd /home/pi
+nohup ./switch.py >/dev/null 2>&1 &
+
+exit 0
