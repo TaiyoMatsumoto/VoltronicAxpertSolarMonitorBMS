@@ -118,12 +118,13 @@ Step 1. Login to SQL server a apply project's specific commands
 
     sudo mysql -u root -p
     CREATE DATABASE axpert;
-    CREATE USER 'admin'@'localhost' IDENTIFIED BY '<password>';  
-    CREATE USER 'admin'@'<rpi_ip>' IDENTIFIED BY '<password>';
+    CREATE USER 'admin'@'localhost' IDENTIFIED BY '<admin password>';  
+    CREATE USER 'admin'@'<rpi_ip>' IDENTIFIED BY '<admin password>';
     GRANT ALL PRIVILEGES ON axpert.* TO 'admin'@'localhost';
-    GRANT ALL PRIVILEGES ON axpert.* TO 'admin'@'<rpi_ip>';
-    <copy and paste all commands from all *.sql files located in the folder SQL>
+    GRANT ALL PRIVILEGES ON axpert.* TO 'admin'@'<e.g. 192.168.%>' IDENTIFIED BY '<admin password>';
+    <copy and paste all commands from all *.sql files located in the folder SQL>;
     FLUSH PRIVILEGES;
+    EXIT;
 
 Step 2. Configure MySQL server to allow connections from remote clients. Change "bind-address = 127.0.0.1" found in /etc/mysql/mariadb.conf.d/50-server.cnf to "bind-address = 0.0.0.0" and restart the service or reboot device. 
 
@@ -134,10 +135,11 @@ Step 3. Install SQL Client on desktop PC in order to be able to remotely connect
 Purpose of this project is not to explain how Grafana works since it's easy to find more help on web. For installation guidelines click on the link https://grafana.com/tutorials/install-grafana-on-raspberry-pi/. After successful installation enter http://<rpi_ip_address>:3000 in the browser and finish installation. Configure MySQL (core plugin) as default data source. Use following parameters:
 
     Name: MySQL 
-    Host: <rpi ip address>:3306
+    Host: localhost:3306
     Database: axpert
     User: admin
-    Password: <password>
+    Password: <admin password>
+    Session Timezone: default
 
 Before importing dashboards located in grafana folder install also plugin "Button Panel" located at web page https://github.com/cloudspout/cloudspout-button-panel that enables controlling of off-grid inverter and switch relay directly from the web interface.
 
@@ -174,7 +176,7 @@ Step 1. Install additional plugins
 
 Step 2. Bind USB devices under static name /dev/axpert and /dev/bms. For instructions how to bind click on https://unix.stackexchange.com/questions/66901/how-to-bind-usb-device-under-a-static-name
 
-Step 3. Copy (use scp command) all *.py and *.sh scripts into folder /home/pi, if needed apply chmod +x command 
+Step 3. clone git repository or copy (use scp command) all *.py and *.sh scripts into folder /home/pi, if needed apply chmod +x command 
 
 Step 4. Create and activate rc-local service. Follow the guideline found on https://www.troublenow.org/752/debian-10-add-rc-local/
 
@@ -186,9 +188,16 @@ Step 6. Update /etc/crontab
 
     cat crontab > /etc/crontab
 
-Step 7. Update "<ip_address>" and SQL password in all *.py and *.sh scripts (grafana server, SQL server, RPI 3)
+Step 7. Update /etc/hosts
 
-Step 8. controller of off-grid inverter is disabled by default. To enable controller, connect to the SQL database and verify the records then click on button ON (controller) of dashboard AXPERT
+    echo '<rpi3_ip_address>  rpi3' >> /etc/hosts
+    echo '<rpi4_ip_address>  rpi4' >> /etc/hosts
+
+Step 8. Find following line and update admin password in all *.py scripts
+
+    MySQLdb.connect(host="localhost",user="admin",passwd="<admin password>",db="axpert")
+
+Step 9. controller of off-grid inverter is disabled by default. To enable controller, connect to the SQL database and verify the records then click on button ON (controller) of dashboard AXPERT
 
 # Dashboards
 

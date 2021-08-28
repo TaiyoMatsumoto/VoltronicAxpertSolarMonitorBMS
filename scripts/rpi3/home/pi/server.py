@@ -9,7 +9,7 @@ class StoreHandler(BaseHTTPRequestHandler):
       store_path1 = pjoin(curdir, 'switch.json')
 
       def _send_cors_headers(self):
-         self.send_header("Access-Control-Allow-Origin", "http://<grafana_server_ip>:3000")
+         self.send_header("Access-Control-Allow-Origin", "http://rpi4:3000")
          self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
          self.send_header("Access-Control-Allow-Headers", "x-api-key,Content-Type,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range")
          self.send_header("Access-Control-Allow-Credentials", "true")

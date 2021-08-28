@@ -1,5 +1,5 @@
 #!/bin/bash
-ping -c1 -i15 -W10 <rpi4_ip>
+ping -c1 -i15 -W10 rpi4
 if [ $? -eq 0 ]; then
           echo 0 > /run/ping.fail
        else

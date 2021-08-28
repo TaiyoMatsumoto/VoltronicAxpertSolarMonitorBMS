@@ -19,13 +19,13 @@ def main():
 
         IsReachable=True
         try:
-            r = requests.get('http://<MBMD_server_ip>:8080/api/avg')
+            r = requests.get('http://rpi3:8080/api/avg')
             r.json()
             data = json.loads(r.text)
         except:
             IsReachable=False
 
-        conn = MySQLdb.connect(host="<SQL_server_ip>",user="<admin>",passwd="<password>",db="axpert")
+        conn = MySQLdb.connect(host="localhost",user="<admin>",passwd="<admin password>",db="axpert")
         cursor = conn.cursor()
 
         if IsReachable:

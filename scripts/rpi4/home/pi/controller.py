@@ -40,7 +40,7 @@ def main():
     command = tempfile.read()
     tempfile.close()
     if command == "ON":
-       conn = MySQLdb.connect(host="<SQL_server_ip>",user="admin",passwd="<password>",db="axpert")
+       conn = MySQLdb.connect(host="localhost",user="admin",passwd="<admin password>",db="axpert")
        cursor = conn.cursor()
 
        range1 = dt.datetime.now()
@@ -72,7 +72,7 @@ def main():
        j = cursor.fetchone()[0]
        if i >= 9 and j >= 9 and dt.datetime.now().hour <= 13 and dt.datetime.now().hour >= 7 :  # fix - invertor FW bug
           logging.debug("Battery voltage is within limits, grid switch deactivated ...")
-          r = requests.post('http://<rpi3_ip>/switch.json',"OFF")
+          r = requests.post('http://rpi3/switch.json',"OFF")
 
        range1 = dt.datetime.now()
        range2 = range1 - dt.timedelta(hours=0, minutes=4)
@@ -92,7 +92,7 @@ def main():
        j = cursor.fetchone()[0]
        if i == 2 and j >= 3 :
           logging.debug("Battery voltage is reaching low levels, grid switch activated ...")
-          r = requests.post('http://<rpi3_ip>:48211/switch.json',"ON")
+          r = requests.post('http://rpi3:48211/switch.json',"ON")
 
        range1 = dt.datetime.now()
        range2 = range1 - dt.timedelta(hours=0, minutes=16)
@@ -127,7 +127,7 @@ def main():
        cursor.execute("SELECT var17 FROM axpert.QPIRI ORDER BY created DESC LIMIT 6")
        k = statistics.median(sum(map(list,cursor.fetchall()), []))
        if i >= 3 and j > 10 :
-          r = requests.post('http://<rpi3_ip>:48211/switch.json',"OFF")
+          r = requests.post('http://rpi3:48211/switch.json',"OFF")
           if k == 0 :
                logging.debug("Battery is almost fully charged, switching to SBU mode ...")
                r = requests.post('http://127.0.0.1:48211/axpert.json',"POP02")
@@ -143,7 +143,7 @@ def main():
        j = statistics.median(sum(map(list,cursor.fetchall()), []))
        if i >= 5 and j > BAT_CVV_LOW :
           logging.debug("Battery is fully charged, bulk and floating voltage set to safe values ...")
-          r = requests.post('http://<rpi3_ip>:48211/switch.json',"OFF")
+          r = requests.post('http://rpi3:48211/switch.json',"OFF")
           r = requests.post('http://127.0.0.1:48211/axpert.json',"MCHGC010"+";PBFT"+str(BAT_FLT_LOW)+";PCVV"+str(BAT_CVV_LOW)+";PBDV"+str(math.floor(BAT_FLT_LOW)))
 
        range1 = dt.datetime.now()
@@ -154,7 +154,7 @@ def main():
        j = statistics.median(sum(map(list,cursor.fetchall()), []))
        if i >= 3 and j > BAT_CVV_LOW :
           logging.debug("Battery is fully charged, bulk and floating voltage set to safe values ....")
-          r = requests.post('http://<rpi3_ip>:48211/switch.json',"OFF")
+          r = requests.post('http://rpi3:48211/switch.json',"OFF")
           r = requests.post('http://127.0.0.1:48211/axpert.json',"MCHGC010"+";PBFT"+str(BAT_FLT_LOW)+";PCVV"+str(BAT_CVV_LOW)+";PBDV"+str(math.floor(BAT_FLT_LOW)))
 
        range1 = dt.datetime.now()
@@ -172,7 +172,7 @@ def main():
                      a = j - 0.1            # Find safe value if default value is not optimal and BMS protection fails
                      b = a - 0.1
              logging.debug("Maximum voltage of battery cell is going to be exceeded, bulk and floating voltage set to safe values ...")
-             r = requests.post('http://<rpi3_ip>:48211/switch.json',"OFF")
+             r = requests.post('http://rpi3:48211/switch.json',"OFF")
              r = requests.post('http://127.0.0.1:48211/axpert.json',"MCHGC010"+";PBFT"+str(b)+";PCVV"+str(a)+";PBDV"+str(math.floor(b)))
 
        cursor.execute("SELECT var15 FROM axpert.QPIRI ORDER BY created DESC LIMIT 3")
@@ -191,7 +191,7 @@ def main():
        k = statistics.median(sum(map(list,cursor.fetchall()), []))
        if j >= 5 and k == 0 :
           logging.debug("Optimal voltage reached switching from USB to SBU mode ...")
-          r = requests.post('http://<rpi3_ip>:48211/switch.json',"OFF")
+          r = requests.post('http://rpi3:48211/switch.json',"OFF")
           r = requests.post('http://127.0.0.1:48211/axpert.json',"POP02")
 
        cursor.close()
