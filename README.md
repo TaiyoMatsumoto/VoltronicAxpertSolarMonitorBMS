@@ -25,7 +25,7 @@ This project is build on ecosystem developed and fully supported by Raspberry PI
 1) RPI version 3 (controller of connectivity to the public grid) and RPI 4 version (data-logger and controller of off-grid inverter)
 2) LiFePo4 16S battery bank (www.tipsun.net)
 3) Daly's BMS 250A
-4) 4th generation of Axpert/Voltronic off-grid inverter
+4) 4th generation of Axpert/Voltronic off-grid inverter 5kW
 5) distribution box connected directly to public grid
 
 # HW implementation
@@ -64,7 +64,7 @@ The switching relay (7) connects distribution grid to AC input of off-grid inver
 
 ![AXPERT](assets/axpert.jpg)
 
-1) 4th generation of Axpert/Voltronic off-grid inverter
+1) 4th generation of Axpert/Voltronic off-grid inverter 5kW
 2) circuit breaker box (AC+DC)
 3) AC OUT (local grid)
 4) AC IN (public grid)
@@ -148,7 +148,9 @@ Before importing dashboards located in grafana folder install also plugin "Butto
 This application is used to read data from bidirectional energy meter Eastron SDM 230 via Modbus interface.
 
 Step 1. Download compiled armv6 version located at https://github.com/volkszaehler/mbmd/releases
+
 Step 2. Unpack and copy binary files to folder /usr/local/bin, if needed apply chmod +x command 
+
 Step 3. Create mbmd.service in the folder /etc/systemd/system as follows:
 
     [Unit]
@@ -197,7 +199,7 @@ Step 7. Update IPs in files *.py, *.sh and AXPERT.json
     sed -i 's/rpi3/<rpi3_ip_address>/g' *.py
     sed -i 's/rpi4/<rpi4_ip_address>/g' *.py
 
-Step 8. Update admin password in all *.py scripts
+Step 8. Update SQL admin password in all *.py scripts
 
     sed -i 's/changeme!/<admin_password>/g' *.py
 
