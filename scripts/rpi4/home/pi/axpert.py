@@ -58,7 +58,7 @@ def main():
             ser.dsrdtr = False                  #disable hardware (DSR/DTR) flow control
             ser.writeTimeout = 2                #timeout for write
 
-            conn = MySQLdb.connect(host="localhost",user="admin",passwd="<admin password>",db="axpert")
+            conn = MySQLdb.connect(host="localhost",user="admin",passwd="changeme!",db="axpert")
             cursor = conn.cursor()
 
             response=""

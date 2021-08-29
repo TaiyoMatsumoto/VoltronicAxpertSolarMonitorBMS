@@ -119,9 +119,9 @@ Step 1. Login to SQL server a apply project's specific commands
     sudo mysql -u root -p
     CREATE DATABASE axpert;
     CREATE USER 'admin'@'localhost' IDENTIFIED BY '<admin password>';  
-    CREATE USER 'admin'@'<rpi_ip>' IDENTIFIED BY '<admin password>';
+    CREATE USER 'admin'@'<subnet e.g. 192.168.%>' IDENTIFIED BY '<admin password>';
     GRANT ALL PRIVILEGES ON axpert.* TO 'admin'@'localhost';
-    GRANT ALL PRIVILEGES ON axpert.* TO 'admin'@'<e.g. 192.168.%>' IDENTIFIED BY '<admin password>';
+    GRANT ALL PRIVILEGES ON axpert.* TO 'admin'@'<subnet e.g. 192.168.%>';
     <copy and paste all commands from all *.sql files located in the folder SQL>;
     FLUSH PRIVILEGES;
     EXIT;
@@ -188,16 +188,22 @@ Step 6. Update /etc/crontab
 
     cat crontab > /etc/crontab
 
-Step 7. Update /etc/hosts
+Step 7. Update IPs in files *.py, *.sh and AXPERT.json
 
-    echo '<rpi3_ip_address>  rpi3' >> /etc/hosts
-    echo '<rpi4_ip_address>  rpi4' >> /etc/hosts
+    sed -i 's/rpi3/<rpi3_ip_address>/g' AXPERT.json
+    sed -i 's/rpi4/<rpi4_ip_address>/g' AXPERT.json
+    sed -i 's/rpi3/<rpi3_ip_address>/g' *.sh
+    sed -i 's/rpi4/<rpi4_ip_address>/g' *.sh
+    sed -i 's/rpi3/<rpi3_ip_address>/g' *.py
+    sed -i 's/rpi4/<rpi4_ip_address>/g' *.py
 
-Step 8. Find following line and update admin password in all *.py scripts
+Step 8. Update admin password in all *.py scripts
 
-    MySQLdb.connect(host="localhost",user="admin",passwd="<admin password>",db="axpert")
+    sed -i 's/changeme!/<admin_password>/g' *.py
 
-Step 9. controller of off-grid inverter is disabled by default. To enable controller, connect to the SQL database and verify the records then click on button ON (controller) of dashboard AXPERT
+Step 9. Import all dashboards into grafana
+
+Step 10. controller of off-grid inverter is disabled by default. To enable controller, connect to the SQL database and verify records and then click on button ON (controller) of dashboard AXPERT
 
 # Dashboards
 

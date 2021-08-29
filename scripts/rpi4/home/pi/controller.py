@@ -40,7 +40,7 @@ def main():
     command = tempfile.read()
     tempfile.close()
     if command == "ON":
-       conn = MySQLdb.connect(host="localhost",user="admin",passwd="<admin password>",db="axpert")
+       conn = MySQLdb.connect(host="localhost",user="admin",passwd="changeme!",db="axpert")
        cursor = conn.cursor()
 
        range1 = dt.datetime.now()
@@ -51,7 +51,7 @@ def main():
        j = cursor.fetchone()[0]
        if i >= 9 and j >= 9:
           logging.debug("SoC is very low, switching to mode: solar first ...")
-          r = requests.post('http://127.0.0.1:48211/axpert.json',"PCP01")
+          r = requests.post('http://rpi4:48211/axpert.json',"PCP01")
 
        range1 = dt.datetime.now()
        range2 = range1 - dt.timedelta(hours=0, minutes=10)
@@ -61,7 +61,7 @@ def main():
        j = cursor.fetchone()[0]
        if i >= 9 and j >= 9:
           logging.debug("SoC is optimal, switching to mode: only solar ...")
-          r = requests.post('http://127.0.0.1:48211/axpert.json',"PCP03")
+          r = requests.post('http://rpi4:48211/axpert.json',"PCP03")
 
 
        range1 = dt.datetime.now()
@@ -82,7 +82,7 @@ def main():
        j = cursor.fetchone()[0]
        if i == 2 and j >= 3 :
           logging.debug("Battery voltage critical, switching to USB mode ...")
-          r = requests.post('http://127.0.0.1:48211/axpert.json',"POP00")
+          r = requests.post('http://rpi4:48211/axpert.json',"POP00")
 
        range1 = dt.datetime.now()
        range2 = range1 - dt.timedelta(hours=0, minutes=4)
@@ -102,7 +102,7 @@ def main():
        j = cursor.fetchone()[0]
        if i >= 15 and j >= 15 :
           logging.debug("SBU mode is detected and grid is on, switching to USB mode ...")
-          r = requests.post('http://127.0.0.1:48211/axpert.json',"POP00")
+          r = requests.post('http://rpi4:48211/axpert.json',"POP00")
        else:
              range1 = dt.datetime.now()
              range2 = range1 - dt.timedelta(hours=0, minutes=16)
@@ -112,7 +112,7 @@ def main():
              j = cursor.fetchone()[0]
              if i >= 15 and j >= 15 :
                   logging.debug("SBU line mode is detected, switching to USB mode ...")
-                  r = requests.post('http://127.0.0.1:48211/axpert.json',"POP00")
+                  r = requests.post('http://rpi4:48211/axpert.json',"POP00")
 
 
 
@@ -130,10 +130,10 @@ def main():
           r = requests.post('http://rpi3:48211/switch.json',"OFF")
           if k == 0 :
                logging.debug("Battery is almost fully charged, switching to SBU mode ...")
-               r = requests.post('http://127.0.0.1:48211/axpert.json',"POP02")
+               r = requests.post('http://rpi4:48211/axpert.json',"POP02")
           else:
                logging.debug("Battery is almost fully charged, max. charging current set to 10A ...")
-               r = requests.post('http://127.0.0.1:48211/axpert.json',"MCHGC010;POP02")
+               r = requests.post('http://rpi4:48211/axpert.json',"MCHGC010;POP02")
 
        range1 = dt.datetime.now()
        range2 = range1 - dt.timedelta(hours=0, minutes=6)
@@ -144,7 +144,7 @@ def main():
        if i >= 5 and j > BAT_CVV_LOW :
           logging.debug("Battery is fully charged, bulk and floating voltage set to safe values ...")
           r = requests.post('http://rpi3:48211/switch.json',"OFF")
-          r = requests.post('http://127.0.0.1:48211/axpert.json',"MCHGC010"+";PBFT"+str(BAT_FLT_LOW)+";PCVV"+str(BAT_CVV_LOW)+";PBDV"+str(math.floor(BAT_FLT_LOW)))
+          r = requests.post('http://rpi4:48211/axpert.json',"MCHGC010"+";PBFT"+str(BAT_FLT_LOW)+";PCVV"+str(BAT_CVV_LOW)+";PBDV"+str(math.floor(BAT_FLT_LOW)))
 
        range1 = dt.datetime.now()
        range2 = range1 - dt.timedelta(hours=0, minutes=4)
@@ -155,7 +155,7 @@ def main():
        if i >= 3 and j > BAT_CVV_LOW :
           logging.debug("Battery is fully charged, bulk and floating voltage set to safe values ....")
           r = requests.post('http://rpi3:48211/switch.json',"OFF")
-          r = requests.post('http://127.0.0.1:48211/axpert.json',"MCHGC010"+";PBFT"+str(BAT_FLT_LOW)+";PCVV"+str(BAT_CVV_LOW)+";PBDV"+str(math.floor(BAT_FLT_LOW)))
+          r = requests.post('http://rpi4:48211/axpert.json',"MCHGC010"+";PBFT"+str(BAT_FLT_LOW)+";PCVV"+str(BAT_CVV_LOW)+";PBDV"+str(math.floor(BAT_FLT_LOW)))
 
        range1 = dt.datetime.now()
        range2 = range1 - dt.timedelta(hours=0, minutes=4)
@@ -173,13 +173,13 @@ def main():
                      b = a - 0.1
              logging.debug("Maximum voltage of battery cell is going to be exceeded, bulk and floating voltage set to safe values ...")
              r = requests.post('http://rpi3:48211/switch.json',"OFF")
-             r = requests.post('http://127.0.0.1:48211/axpert.json',"MCHGC010"+";PBFT"+str(b)+";PCVV"+str(a)+";PBDV"+str(math.floor(b)))
+             r = requests.post('http://rpi4:48211/axpert.json',"MCHGC010"+";PBFT"+str(b)+";PCVV"+str(a)+";PBDV"+str(math.floor(b)))
 
        cursor.execute("SELECT var15 FROM axpert.QPIRI ORDER BY created DESC LIMIT 3")
        i = statistics.median(sum(map(list,cursor.fetchall()), []))
        if dt.datetime.now().hour == 3 and i < 40 :
           logging.debug("Bulk, floating voltage and max. charging current set to optimal values ...")
-          r = requests.post('http://127.0.0.1:48211/axpert.json',"PCVV"+str(BAT_CVV_HIGH)+";PBFT"+str(BAT_FLT_HIGH)+";MCHGC040"+";PBDV"+str(math.floor(BAT_FLT_HIGH)))
+          r = requests.post('http://rpi4:48211/axpert.json',"PCVV"+str(BAT_CVV_HIGH)+";PBFT"+str(BAT_FLT_HIGH)+";MCHGC040"+";PBDV"+str(math.floor(BAT_FLT_HIGH)))
 
        range1 = dt.datetime.now()
        range2 = range1 - dt.timedelta(hours=0, minutes=6)
@@ -192,7 +192,7 @@ def main():
        if j >= 5 and k == 0 :
           logging.debug("Optimal voltage reached switching from USB to SBU mode ...")
           r = requests.post('http://rpi3:48211/switch.json',"OFF")
-          r = requests.post('http://127.0.0.1:48211/axpert.json',"POP02")
+          r = requests.post('http://rpi4:48211/axpert.json',"POP02")
 
        cursor.close()
        conn.close()

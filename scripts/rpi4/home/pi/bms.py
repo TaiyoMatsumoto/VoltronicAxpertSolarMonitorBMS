@@ -50,7 +50,7 @@ def main():
        bytesize=serial.EIGHTBITS,
        timeout = 2)
 
-    conn = MySQLdb.connect(host="localhost",user="admin",passwd="<admin passoword>",db="axpert")
+    conn = MySQLdb.connect(host="localhost",user="admin",passwd="changeme!",db="axpert")
     cursor = conn.cursor()
     ignoreSQL=0
 
