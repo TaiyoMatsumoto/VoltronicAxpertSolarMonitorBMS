@@ -17,12 +17,12 @@ Directive (EU) 2018/2001 of the European Parliament establish basic framework fo
 # Overview
 This project is build on ecosystem developed and fully supported by Raspberry PI team. The scope of this micro project is to implement:
 - web based monitoring functions of photovoltaic solar system (PV) and off-grid inverter
-- enhanced controlling capabilities of off-grid inverter and BMS
+- enhanced controller capabilities of off-grid inverter and BMS
 
 ![Overview](assets/overview.png)
 
 # Main hardware components
-1) RPI version 3 (controller of connectivity to the public grid) and RPI 4 version (data-logger and controller of off-grid inverter)
+1) RPI version 3 (controller of connectivity to the public grid) and RPI version 4 (data-logger and controller of off-grid inverter)
 2) LiFePo4 16S battery bank (www.tipsun.net)
 3) Daly's BMS 250A
 4) 4th generation of Axpert/Voltronic off-grid inverter 5kW
@@ -45,7 +45,7 @@ Main focus of the project is to provide the software to general public under the
 8) raspberry PI 3 with USB/RS485 converter
 9) 3V Module Board Shield with Optocoupler Relay connected to PORT 26 of RPI 3 (not visible) 
 
-The switching relay (7) connects distribution grid to AC input of off-grid inverter only in case all conditions are met:
+The switching relay (7) connects distribution grid to AC input of off-grid inverter in case RPI4 is not pingable or all following conditions are met:
 - public grid parameters are in nominal values (controlled by 3 & 4)
 - battery bank is discharging and voltage of LiFePO4 battery bank is lower than 51.2V for at least 4 minutes (controlled by 8 & 9)
 
@@ -53,7 +53,7 @@ The switching relay (7) connects distribution grid to AC input of off-grid inver
 
 ![BMS](assets/bms.jpg)
 
-1) Daly's LiFePO battery management system. Overvoltage protection of individual cell is set to 3.57V and undervoltage to 2.58V via BMS bluetooth gadget.
+1) Daly's LiFePo4 battery management system. Overvoltage protection of individual cell is set to 3.57V and undervoltage to 2.58V via BMS bluetooth gadget.
 2) USB/RS232 converter (Daly) connected to RPI 4
 3) LiFePo4 16S
 4) DYKB 1.2A active balancer and energy transfer board
@@ -132,7 +132,7 @@ Step 3. Install SQL Client on desktop PC in order to be able to remotely connect
 
 ## C. Grafana installation (Raspberry Pi 4 with 4 GB of RAM is recommended)
 
-Purpose of this project is not to explain how Grafana works since it's easy to find more help on web. For installation guidelines click on the link https://grafana.com/tutorials/install-grafana-on-raspberry-pi/. After successful installation enter http://<rpi_ip_address>:3000 in the browser and finish installation. Configure MySQL (core plugin) as default data source. Use following parameters:
+Purpose of this project is not to explain how Grafana works since it's easy to find more help on web. For installation guidelines click on the link https://grafana.com/tutorials/install-grafana-on-raspberry-pi/. After successful installation enter http://<rpi4_ip_address>:3000 in the browser and finish installation. Configure MySQL (core plugin) as default data source. Use following parameters:
 
     Name: MySQL 
     Host: localhost:3306
@@ -199,13 +199,17 @@ Step 7. Update IPs in files *.py, *.sh and AXPERT.json
     sed -i 's/rpi3/<rpi3_ip_address>/g' *.py
     sed -i 's/rpi4/<rpi4_ip_address>/g' *.py
 
-Step 8. Update SQL admin password in all *.py scripts
+Step 8. Update maximum battery charging current (optional)
+
+    sed -i 's/MCHGC040/MCHGCXXX/g' controller.py
+
+Step 9. Update SQL admin password in all *.py scripts
 
     sed -i 's/changeme!/<admin_password>/g' *.py
 
-Step 9. Import all dashboards into grafana
+Step 10. Import all dashboards into grafana
 
-Step 10. controller of off-grid inverter is disabled by default. To enable controller, connect to the SQL database and verify records and then click on button ON (controller) of dashboard AXPERT
+Step 11. controller of off-grid inverter is disabled by default. To enable controller, connect to the SQL database and verify records and then click on button ON (controller) of dashboard AXPERT
 
 # Dashboards
 
